@@ -32,17 +32,19 @@ class DAO():
         result = []
 
         cursor = conn.cursor(dictionary=True)
-        query = """select distinctrow t.AlbumId as a1, t2.AlbumId  as a2
-                    from playlisttrack p , track t , playlisttrack p2 , track t2 
-                    where p2.PlaylistId = p.PlaylistId
-                    and p2.TrackId = t2.TrackId 
-                    and p.TrackId = t.TrackId
-                    and t.AlbumId < t2.AlbumId  """
-        cursor.execute(query, ())
+        query = """SELECT distinctrow t.AlbumId as a1, t2.AlbumId as a2
+                       FROM playlisttrack p , track t , playlisttrack p2 , track t2 
+                       WHERE p2.PlaylistId = p.PlaylistId
+                       and p2.TrackId = t2.TrackId 
+                       and p.TrackId = t.TrackId
+                       and t.AlbumId < t2.AlbumId """
+
+        cursor.execute(query)
 
         for row in cursor:
             if row["a1"] in idMap and row["a2"] in idMap:
-                result.append( ( idMap[row["a1"]], idMap[row["a2"]] ) )
+                result.append((idMap[row["a1"]], idMap[row["a2"]]))
+
         cursor.close()
         conn.close()
         return result

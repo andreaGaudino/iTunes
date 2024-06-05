@@ -1,3 +1,5 @@
+import copy
+
 import networkx as nx
 
 from database.DAO import DAO
@@ -7,6 +9,44 @@ class Model:
     def __init__(self):
         self.graph = nx.Graph()
         self.idMap = {}
+
+    def getSetAlbum(self, a1, dTOT):
+        self.bestSet = None
+        self.bestScore = 0
+        connessa = nx.node_connected_component(self.graph, a1)
+        parziale = set([a1])
+        connessa.remove(a1)
+
+        self.ricorsione(parziale, connessa, dTOT)
+        return self.bestSet, self.durataTot(parziale)
+
+
+    def ricorsione(self, parziale, connessa, dTOT):
+        if self.durataTot(parziale) > dTOT:
+            return
+
+        if len(parziale) > self.bestScore:
+            self.bestSet = copy.deepcopy(parziale)
+            self.bestScore = len(parziale)
+
+
+        for c in connessa:
+            if c not in parziale:
+                parziale.add(c)
+                rimanenti = copy.deepcopy(connessa)
+                rimanenti.remove(c)
+                self.ricorsione(parziale, rimanenti, dTOT)
+                parziale.remove(c)
+
+
+
+
+    def durataTot(self, listOfNodes):
+        dtot = 0
+        for n in listOfNodes:
+            dtot += toMinutes(n.totD)
+        return dtot
+
 
     def buildGraph(self, d):
         self.graph.clear()
@@ -30,6 +70,12 @@ class Model:
 
     def getNodes(self):
         return list(self.graph.nodes)
+    def getNodeI(self, i):
+        return self.idMap[i]
+
+
+
+
 def toMinutes (d):
     return d/1000/60
 
