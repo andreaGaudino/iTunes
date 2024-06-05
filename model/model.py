@@ -18,7 +18,7 @@ class Model:
         connessa.remove(a1)
 
         self.ricorsione(parziale, connessa, dTOT)
-        return self.bestSet, self.durataTot(parziale)
+        return self.bestSet, self.durataTot(self.bestSet)
 
 
     def ricorsione(self, parziale, connessa, dTOT):
